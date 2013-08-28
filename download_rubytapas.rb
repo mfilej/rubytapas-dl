@@ -1,6 +1,6 @@
 #! /usr/bin/env ruby -w
 require "pathname"
-require "nokogiri"
+require "rexml/document"
 
 def usage
   "Usage: #$0 <username> <password> <path>"
@@ -46,16 +46,30 @@ def download_url(href, filename)
   "https://rubytapas.dpdcart.com/feed/download/#{id}/#{filename}"
 end
 
-doc = Nokogiri::XML(fetch_feed)
-doc.search("item").reverse.each do |item|
-  name = item.at("title").text
+def feed_episodes
+  doc = REXML::Document.new(fetch_feed)
+  REXML::XPath.each(doc.root, "channel/item")
+end
+
+def episode_title(item)
+  REXML::XPath.first(item, "title").get_text.to_s
+end
+
+def episode_description(item)
+  REXML::XPath.first(item, "description").text
+end
+
+def episode_links(item)
+  doc = REXML::Document.new(episode_description(item))
+  REXML::XPath.each(doc, "//a[contains(@href, 'subscriber/download?file_id')]").map do |a|
+    [a.attribute("href").to_s, a.text]
+  end
+end
+
+feed_episodes.each do |item|
+  name = episode_title(item)
   ep_number = name.split.first.to_i
   dir_name = "%04d" % ep_number
-
-  desc = Nokogiri::HTML(item.at("description").text)
-  downloads = desc.search("a[href*=download]").map { |a|
-    [download_url(a[:href], a.text), a.text]
-  }
 
   target_dir = $target_path.join(dir_name)
 
@@ -65,7 +79,7 @@ doc.search("item").reverse.each do |item|
     next
   end
 
-  downloads.each do |(url, filename)|
+  episode_links(item).each do |(url, filename)|
     target_file = target_dir.join(filename)
     if target_file.exist?
       warn "#{filename} already downloaded, skipping"
@@ -76,6 +90,6 @@ doc.search("item").reverse.each do |item|
       "-u", username_and_password,
       "-o", target_file.to_path,
       "-L",
-      url
+      download_url(url, filename)
   end
 end
