@@ -1,14 +1,35 @@
-#! /usr/bin/env ruby -w
+#! /usr/bin/env ruby
 require "pathname"
+require "optparse"
 require "rexml/document"
 
-def usage
-  "Usage: #$0 <username> <password> <path>"
+options = {}
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: #$0 -u USERNAME -p PASSWORD -t TARGET"
+
+  opts.on("-u", "--username USERNAME", "RubyTapas username") do |username|
+    options[:username] = username
+  end
+
+  opts.on("-p", "--password PASSWORD", "RubyTapas password") do |password|
+    options[:password] = password
+  end
+
+  opts.on("-t", "--target DIRECTORY", "Path where episodes will be stored") do |target|
+    options[:target] = target
+  end
 end
 
-abort usage unless ARGV.size == 3
-$username, $password, $target_path = ARGV
-$target_path = Pathname($target_path).expand_path
+optparse.parse!
+
+missing = [:username, :password, :target].find { |arg| options[arg].nil? }
+if missing
+  warn "Missing argument: #{missing}"
+  warn optparse
+  abort
+end
+
+$target_path = Pathname(options[:target]).expand_path
 
 abort "Error: path '#$target_path' does not exist" unless $target_path.exist?
 abort "Error: path '#$target_path' is not a directory" unless $target_path.directory?
