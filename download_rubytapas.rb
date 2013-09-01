@@ -5,18 +5,30 @@ require "rexml/document"
 
 options = {}
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: #$0 -u USERNAME -p PASSWORD -t TARGET"
+  opts.banner = "Usage: #$0 -u USERNAME -p PASSWORD -t TARGET [-r]"
 
-  opts.on("-u", "--username USERNAME", "RubyTapas username") do |username|
+  opts.on "-h", "--help", "Show usage" do |help|
+    warn opts
+    exit
+  end
+
+  opts.on "-u", "--username USERNAME", "RubyTapas username" do |username|
     options[:username] = username
   end
 
-  opts.on("-p", "--password PASSWORD", "RubyTapas password") do |password|
+  opts.on "-p", "--password PASSWORD", "RubyTapas password" do |password|
     options[:password] = password
   end
 
-  opts.on("-t", "--target DIRECTORY", "Path where episodes will be stored") do |target|
+  opts.on "-t", "--target DIRECTORY",
+    "Path where episodes will be stored" do |target|
     options[:target] = target
+  end
+
+  opts.on "-r", "--recent-only",
+    "Only download recent episodes",
+    "  (stops when an existing episode is found in target directory)" do |r|
+    options[:recent] = r
   end
 end
 
@@ -29,6 +41,8 @@ if missing
   abort
 end
 
+$username = options[:username]
+$password = options[:password]
 $target_path = Pathname(options[:target]).expand_path
 
 abort "Error: path '#$target_path' does not exist" unless $target_path.exist?
@@ -103,8 +117,14 @@ feed_episodes.each do |item|
   episode_links(item).each do |(url, filename)|
     target_file = target_dir.join(filename)
     if target_file.exist?
-      warn "#{filename} already downloaded, skipping"
-      next
+      if options[:recent]
+        warn "#{filename} already downloaded, stopping"
+        puts "Done updating."
+        exit
+      else
+        warn "#{filename} already downloaded, skipping"
+        next
+      end
     end
 
     command "curl",
