@@ -77,7 +77,7 @@ def fetch_feed
 end
 
 def download_url(href, filename)
-  id = href.match(/file_id=(?<id>\d+)/)[:id]
+  id = href[/file_id=(\d+)/, 1]
   "https://rubytapas.dpdcart.com/feed/download/#{id}/#{filename}"
 end
 
