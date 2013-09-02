@@ -3,9 +3,11 @@ require "pathname"
 require "optparse"
 require "rexml/document"
 
-options = {}
+options = {
+  recent: false
+}
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: #$0 -u USERNAME -p PASSWORD -t TARGET [-r]"
+  opts.banner = "Usage: #$0 -u USERNAME -p PASSWORD [-r] <TARGET>"
 
   opts.on "-h", "--help", "Show usage" do |help|
     warn opts
@@ -20,23 +22,17 @@ optparse = OptionParser.new do |opts|
     options[:password] = password
   end
 
-  opts.on "-t", "--target DIRECTORY",
-    "Path where episodes will be stored" do |target|
-    options[:target] = target
-  end
-
-  opts.on "-r", "--recent-only",
-    "Only download recent episodes",
-    "  (stops when an existing episode is found in target directory)" do |r|
+  opts.on "-r", "--recent-only", "Only download recent episodes" do |r|
     options[:recent] = r
   end
 end
 
 optparse.parse!
+options[:target] = ARGV.first
 
 missing = [:username, :password, :target].find { |arg| options[arg].nil? }
 if missing
-  warn "Missing argument: #{missing}"
+  warn "Missing argument: #{missing.upcase}"
   warn optparse
   abort
 end
