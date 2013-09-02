@@ -9,22 +9,23 @@ options = {
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: #$0 -u USERNAME -p PASSWORD [-r] <TARGET>"
 
+  opts.on "-u", "--username USERNAME", "RubyTapas username (required)" do |username|
+    options[:username] = username
+  end
+
+  opts.on "-p", "--password PASSWORD", "RubyTapas password (required)" do |password|
+    options[:password] = password
+  end
+
+  opts.on "-r", "--recent-only", "Only download recent episodes" do |recent|
+    options[:recent] = recent
+  end
+
   opts.on "-h", "--help", "Show usage" do |help|
     warn opts
     exit
   end
 
-  opts.on "-u", "--username USERNAME", "RubyTapas username" do |username|
-    options[:username] = username
-  end
-
-  opts.on "-p", "--password PASSWORD", "RubyTapas password" do |password|
-    options[:password] = password
-  end
-
-  opts.on "-r", "--recent-only", "Only download recent episodes" do |r|
-    options[:recent] = r
-  end
 end
 
 optparse.parse!
