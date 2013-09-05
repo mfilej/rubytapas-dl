@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 require "pathname"
 require "optparse"
+require "rss"
 require "rexml/document"
 
 options = {
@@ -79,27 +80,18 @@ def download_url(href, filename)
 end
 
 def feed_episodes
-  doc = REXML::Document.new(fetch_feed)
-  REXML::XPath.each(doc.root, "channel/item")
+  RSS::Parser.parse(fetch_feed).items
 end
 
-def episode_title(item)
-  REXML::XPath.first(item, "title").get_text.to_s
-end
-
-def episode_description(item)
-  REXML::XPath.first(item, "description").text
-end
-
-def episode_links(item)
-  doc = REXML::Document.new(episode_description(item))
+def episode_links(text)
+  doc = REXML::Document.new(text)
   REXML::XPath.each(doc, "//a[contains(@href, 'subscriber/download?file_id')]").map do |a|
     [a.attribute("href").to_s, a.text]
   end
 end
 
 feed_episodes.each do |item|
-  name = episode_title(item)
+  name = item.title
   ep_number = name.split.first.to_i
   dir_name = "%04d" % ep_number
 
@@ -111,7 +103,7 @@ feed_episodes.each do |item|
     next
   end
 
-  episode_links(item).each do |(url, filename)|
+  episode_links(item.description).each do |(url, filename)|
     target_file = target_dir.join(filename)
     if target_file.exist?
       if options[:recent]
