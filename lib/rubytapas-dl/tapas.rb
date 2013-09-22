@@ -1,10 +1,9 @@
 require "rss"
 require_relative "episode"
-require_relative "feed"
 
 class Tapas
-  def initialize(username, password)
-    @username, @password = username, password
+  def initialize(body)
+    @body = body
   end
 
   def each
@@ -16,11 +15,7 @@ class Tapas
   private
 
   def items
-    RSS::Parser.parse(feed.body).items
-  end
-
-  def feed
-    Feed.new(@username, @password)
+    RSS::Parser.parse(@body).items
   end
 end
 

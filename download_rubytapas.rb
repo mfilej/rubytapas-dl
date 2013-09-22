@@ -5,11 +5,12 @@ require "optparse"
 
 $LOAD_PATH.unshift File.expand_path("../lib/rubytapas-dl", __FILE__)
 require "episode"
-require "feed"
 require "tapas"
 require "fetches_uri"
 require "downloads_episode"
 require "download_notifier"
+
+FEED_URI = "https://rubytapas.dpdcart.com/feed"
 
 options = {
   recent: false
@@ -53,7 +54,8 @@ $target_path = Pathname(options[:target]).expand_path
 abort "Error: path '#$target_path' does not exist" unless $target_path.exist?
 abort "Error: path '#$target_path' is not a directory" unless $target_path.directory?
 
-feed_episodes = Tapas.new($username, $password)
+feed = FetchesURI.new(FEED_URI, $username, $password)
+feed_episodes = Tapas.new(feed.body)
 
 feed_episodes.each do |episode|
   target_dir = $target_path.join(episode.directory_name)
