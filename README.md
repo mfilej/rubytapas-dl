@@ -21,6 +21,9 @@ Only download new episodes (stops when an older episode is found at target locat
 
     ./download_rubytapas.rb -u TAPAS_USER -p TAPAS_PASS -r ~/RubyTapas
 
+## Dependencies
+
+* ruby 1.9.3 or above
 
 ## Coming up
 
