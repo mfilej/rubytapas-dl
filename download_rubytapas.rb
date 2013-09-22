@@ -2,7 +2,6 @@
 
 require "pathname"
 require "optparse"
-require "rexml/document"
 
 $LOAD_PATH.unshift File.expand_path("../lib/rubytapas-dl", __FILE__)
 require "episode"
@@ -54,22 +53,6 @@ $target_path = Pathname(options[:target]).expand_path
 abort "Error: path '#$target_path' does not exist" unless $target_path.exist?
 abort "Error: path '#$target_path' is not a directory" unless $target_path.directory?
 
-def command(*args)
-  warn "Command: #{args.join ' '}"
-  success = system(*args)
-  abort "Error: command failed with exit status #$?" unless success
-end
-
-def capture(*args)
-  warn "Command: #{args.join ' '}"
-  result = IO.popen(args) { |io| io.read }
-  abort "Error: command failed with exit status #{$?.exitstatus}" unless $?.success?
-  result
-end
-
-def username_and_password
-  "#$username:#$password"
-end
 feed_episodes = Tapas.new($username, $password)
 
 feed_episodes.each do |episode|
