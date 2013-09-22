@@ -1,7 +1,4 @@
 #! /usr/bin/env ruby
-# TODO:
-# curl -> nethttp
-# handle http error codes
 
 require "pathname"
 require "optparse"
@@ -11,6 +8,9 @@ $LOAD_PATH.unshift File.expand_path("../lib/rubytapas-dl", __FILE__)
 require "episode"
 require "feed"
 require "tapas"
+require "fetches_uri"
+require "downloads_episode"
+require "download_notifier"
 
 options = {
   recent: false
@@ -94,10 +94,11 @@ feed_episodes.each do |episode|
       end
     end
 
-    command "curl",
-      "-u", username_and_password,
-      "-o", target_file.to_path,
-      "-L",
-      link.download_url
+    notifier = DownloadNotifier.new(target_file)
+    fetcher = FetchesURI.new link.download_url, $username, $password
+    DownloadsEpisode.download target: target_file,
+      fetcher: fetcher,
+      notifier: notifier
+
   end
 end
