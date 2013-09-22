@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require "rubytapas-dl/download_notifier"
 require "stringio"
 
