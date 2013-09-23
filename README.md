@@ -3,9 +3,11 @@
 
 # rubytapas-dl
 
-## Usage
-
 Download RubyTapas episodes from the CLI.
+
+I started this project to practice BDD and refactoring. The goal is to come up with an object-oriented design from a procedural program (`download_rubytapas.rb`).
+
+## Usage
 
     Usage: ./download_rubytapas.rb -u USERNAME -p PASSWORD [-r] <TARGET>
         -u, --username USERNAME          RubyTapas username (required)
