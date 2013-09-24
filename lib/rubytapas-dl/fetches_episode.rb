@@ -1,6 +1,6 @@
 require "pathname"
 
-class DownloadsEpisode
+class FetchesEpisode
   def self.download(args = {})
     new(args).download
   end

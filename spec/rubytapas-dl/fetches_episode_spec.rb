@@ -1,7 +1,7 @@
-require "rubytapas-dl/downloads_episode"
+require "rubytapas-dl/fetches_episode"
 require "tempfile"
 
-describe DownloadsEpisode do
+describe FetchesEpisode do
   let(:fetcher) { double "fetcher" }
   let(:file) { Tempfile.new "rubytapas-dl-spec" }
 
@@ -13,7 +13,7 @@ describe DownloadsEpisode do
   end
 
   it "writes fetched data to the target file" do
-    DownloadsEpisode.download(fetcher: fetcher, target: file)
+    FetchesEpisode.download(fetcher: fetcher, target: file)
 
     expect(file.read).to eq("ThisIsData!!!")
   end
@@ -26,6 +26,6 @@ describe DownloadsEpisode do
     expect(notifier).to receive(:progress).with(99)
     expect(notifier).to receive(:download_finished)
 
-    DownloadsEpisode.download(fetcher: fetcher, target: file, notifier: notifier)
+    FetchesEpisode.download(fetcher: fetcher, target: file, notifier: notifier)
   end
 end

@@ -7,7 +7,7 @@ $LOAD_PATH.unshift File.expand_path("../lib/rubytapas-dl", __FILE__)
 require "episode"
 require "tapas"
 require "fetches_uri"
-require "downloads_episode"
+require "fetches_episode"
 require "download_notifier"
 
 FEED_URI = "https://rubytapas.dpdcart.com/feed"
@@ -81,7 +81,7 @@ feed_episodes.each do |episode|
 
     notifier = DownloadNotifier.new(target_file)
     fetcher = FetchesURI.new link.download_url, $username, $password
-    DownloadsEpisode.download target: target_file,
+    FetchesEpisode.download target: target_file,
       fetcher: fetcher,
       notifier: notifier
 
