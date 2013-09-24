@@ -1,12 +1,12 @@
 # encoding: utf-8
 
-require "rubytapas-dl/download_notifier"
+require "rubytapas-dl/download_progress_notifier"
 require "stringio"
 
-describe DownloadNotifier do
+describe DownloadProgressNotifier do
   let(:target) { "/tmp/download.txt" }
   let(:listener) { StringIO.new }
-  let(:notifier) { DownloadNotifier.new(target, listener) }
+  let(:notifier) { DownloadProgressNotifier.new(target, listener) }
 
   it "notifies that th download has started" do
     notifier.download_started

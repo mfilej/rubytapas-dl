@@ -8,7 +8,7 @@ require "episode"
 require "tapas"
 require "fetches_uri"
 require "fetches_episode"
-require "download_notifier"
+require "download_progress_notifier"
 
 FEED_URI = "https://rubytapas.dpdcart.com/feed"
 
@@ -79,8 +79,8 @@ feed_episodes.each do |episode|
       end
     end
 
-    notifier = DownloadNotifier.new(target_file)
     fetcher = FetchesURI.new link.download_url, $username, $password
+    notifier = DownloadProgressNotifier.new(target_file)
     FetchesEpisode.download target: target_file,
       fetcher: fetcher,
       notifier: notifier

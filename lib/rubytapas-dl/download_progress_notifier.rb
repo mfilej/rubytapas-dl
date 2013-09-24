@@ -2,7 +2,7 @@
 
 require "pathname"
 
-class DownloadNotifier
+class DownloadProgressNotifier
   attr_reader :target, :output
 
   def initialize(target, output = $stderr)
