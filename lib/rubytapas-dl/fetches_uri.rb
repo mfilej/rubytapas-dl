@@ -1,6 +1,8 @@
 require "net/http"
 
 class FetchesURI
+  USER_AGENT = "rubytapas-dl/1.0 (https://github.com/mfilej/rubytapas-dl)"
+
   def initialize(uri, username=nil, password=nil)
     @uri = URI.parse(uri)
 
@@ -9,6 +11,7 @@ class FetchesURI
 
     @request = Net::HTTP::Get.new(@uri.request_uri)
     @request.basic_auth(username, password) if username && password
+    @request["User-Agent"] = USER_AGENT
   end
 
   def body
